@@ -28,7 +28,7 @@ class TestBk8600(object):
         py_instrument.reset_mock()
 
         # when
-        instrument.set_current(current_a)
+        instrument.set_current_level(current_a)
 
         # then
         py_instrument.write.assert_has_calls([

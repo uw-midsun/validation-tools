@@ -1,2 +1,0 @@
-class MsLogger(object):
-    pass
