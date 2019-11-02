@@ -15,6 +15,9 @@ class B2902A(object):
         self.resource_manager = pyvisa.ResourceManager()
         self.instrument = None
 
+    def reset(self):
+        self.write(self.RESET_COMMAND)
+
     def list_all_resources(self):
         msg = "Available resources: \n"
         resources = self.resource_manager.list_resources()
@@ -66,6 +69,8 @@ class B2902A(object):
         SENSE_MAX_KEY: 4.2,
         SENSE_MIN_KEY: 2.5
     }
+    VOLT_SENSE_RANGE = 5
+
     DEFAULT_ACQUIRE_CONFIG = {
         'count': 50,
         'time': 2e-5,
@@ -83,11 +88,27 @@ class B2902A(object):
         CURRENT = 'curr'
         VOLTAGE = 'volt'
 
+    def get_voltage(self):
+        self.reset()
+        commands = [
+            "sens:rem on",
+            "func:mode curr",
+            "sens:volt:prot:pos %f" % float(self.VOLT_SENSE_RANGE),
+            "sens:volt:prot:neg %f" % float(-self.VOLT_SENSE_RANGE),
+            "init",
+            "outp off"
+        ]
+        for c in commands:
+            self.write(c)
+        raw_data = self.query('sens:data?')
+        return float(raw_data.split(',')[0])
+
     def run_list_mode(self, mode, steps,
                       transient_trig_config=None,
                       acquire_trig_config=None,
                       sense_limit=None,
                       timeout=TIMEOUT):
+        self.reset()
         sense_limit = sense_limit or B2902A.DEFAULT_SENSE_LIMIT_CURR if \
             mode is B2902A.Mode.VOLTAGE \
             else B2902A.DEFAULT_SENSE_LIMIT_VOLT
@@ -121,9 +142,6 @@ class B2902A(object):
             self.write(c)
         #self.experiment() # uncomment if debugging
         self.write('init', timeout=timeout)
-        op = self.query('*opc?')
-        if not op == '1\n':
-            log.error('operation not complete: %s' % op)
         self.write('outp off')
         raw_data = self.query('sens:data?')
         data = self.convert_from_raw_data(raw_data)
@@ -146,11 +164,8 @@ class B2902A(object):
         resource_id = resource_id or self.get_first_resource()
         log.info("connecting to %s" % resource_id)
         self.instrument = self.resource_manager.open_resource(resource_id)
-        self.instrument.write(B2902A.RESET_COMMAND)
-
-    def measure_voltage(self):
-        self.instrument.write("OUTP:ON:AUTO ON")
-        return float(self.instrument.query("VOLT?"))
+        self.reset()
+        return self
 
 
 log = logging.getLogger("{}.{}".format(B2902A.__module__, B2902A.__name__))

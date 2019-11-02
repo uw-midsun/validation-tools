@@ -8,6 +8,7 @@ if __name__ == '__main__':
     driver = B2902A()
     driver.connect()
     driver.experiment()
+    log.info('voltage: %f' % driver.get_voltage())
     #mode = 'curr'
     #steps = [0.01 * d for d in range(10)]
     #data = driver.run_list_mode(B2902A.Mode.CURRENT, steps)

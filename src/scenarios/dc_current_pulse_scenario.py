@@ -3,15 +3,13 @@ from scenarios.b2902a_list_mode_scenario import B2902AListModeScenario
 
 
 class DcCurrentPulseScenario(B2902AListModeScenario):
-    #TIMEOUT_MS = 6e3
-    TIMEOUT_MS = 35e3
+    TIMEOUT_MS = 6e3
 
     def run_scenario(self, directory):
+        super().run_scenario(directory)
         measure_time = 12.5e-3
-        #start = 0.5
-        start = 0.1
-        #delta = 0.5
-        delta = 0.1
+        start = 0.5
+        delta = 0.5
         end = 3
         num_levels = int((end - start)/delta) + 2
         points_in_each_level = 20

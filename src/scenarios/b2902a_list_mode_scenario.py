@@ -9,6 +9,7 @@ class B2902AListModeScenario(B2902AScenario):
         self.serial_number = serial_number
 
     def run_scenario(self, directory):
+        log.info("Running scenario: %s" % self.__class__.__name__)
         return {}
 
     def run(self, directory):

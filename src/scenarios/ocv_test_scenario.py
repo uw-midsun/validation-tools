@@ -6,6 +6,7 @@ class OcvTestScenario(B2902AListModeScenario):
     TIMEOUT_MS = 1e3
 
     def run_scenario(self, directory):
+        super().run_scenario(directory)
         amplitude = 0.0
         measure_time = 2e-5
         num_triggers = 1000
