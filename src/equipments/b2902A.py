@@ -163,7 +163,7 @@ class B2902A(object):
     def connect(self, resource_id=None):
         resource_id = resource_id or self.get_first_resource()
         log.info("connecting to %s" % resource_id)
-        self.instrument = self.resource_manager.open_resource(resource_id)
+        self.instrument = self.resource_manager.open_resource(self.RESOURCE_ID)
         self.reset()
         return self
 
