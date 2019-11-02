@@ -3,7 +3,7 @@ from scenarios.b2902a_list_mode_scenario import B2902AListModeScenario
 
 
 class DcCurrentPulseScenario(B2902AListModeScenario):
-    TIMEOUT_MS = 6e3
+    TIMEOUT_MS = 10e3
 
     def run_scenario(self, directory):
         super().run_scenario(directory)
@@ -11,7 +11,7 @@ class DcCurrentPulseScenario(B2902AListModeScenario):
         start = 0.5
         delta = 0.5
         end = 3
-        num_levels = int((end - start)/delta) + 2
+        num_levels = round((end - start)/delta) + 1
         points_in_each_level = 20
         steps = []
         for i in range(num_levels):
@@ -25,7 +25,7 @@ class DcCurrentPulseScenario(B2902AListModeScenario):
             'count': num_triggers,
             'time': measure_time,
             'source': 'tim',
-            'delay': 1e-3
+            'delay': measure_time/2
         }
         trans_config = acquire_config.copy()
         trans_config['delay'] = 0
