@@ -8,6 +8,7 @@ importlib-metadata==0.23
 mock==3.0.5
 more-itertools==7.2.0
 packaging==19.2
+Phidget22==1.5.20191101
 pluggy==0.13.0
 py==1.8.0
 pyparsing==2.4.2
