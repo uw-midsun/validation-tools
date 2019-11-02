@@ -40,7 +40,7 @@ class Experiment(object):
         self.scale.calibrate()
         path = self.setup()
         counter = 0
-        last_battery_id = None
+        last_battery_id = "calibration_weight"
         while True:
             if counter > self.RECALIBRATION_COUNTER:
                 counter = 0

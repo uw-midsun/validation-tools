@@ -14,7 +14,7 @@ class WeightMeasurementScenario(object):
         self.field_names = ['time', 'weight(g)']
 
     def start(self, directory):
-        file_name = "weight-%s.csv" % self.serial_number
+        file_name = "%s-weight.csv" % self.serial_number
         file_path = "%s/%s" % (directory, file_name)
         self.file_path = file_path
         log.info("Taking weight measurements:")

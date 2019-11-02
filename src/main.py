@@ -12,8 +12,8 @@ if __name__ == '__main__':
     MsLoggerConfigurator().configure_logging(log_level=logging.INFO)
     log = logging.getLogger("test")
     recipes = [
-        AcInternalScenario,
         OcvTestScenario,
+        AcInternalScenario,
         DcCurrentPulseScenario,
         DcLinearSweepScenario,
         TenSecondsDischargeScenario
