@@ -46,8 +46,8 @@ class Experiment(object):
         return path
 
     def run(self):
-        path = self.setup()
         self.scale.calibrate()
+        path = self.setup()
         counter = 0
         last_battery_id = "calibration_weight"
         while True:
