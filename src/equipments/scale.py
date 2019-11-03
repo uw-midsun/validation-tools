@@ -13,13 +13,19 @@ class Scale(object):
         self.lower_ratio = None
         self.higher_ratio = None
 
-    def calibrate(self):
+    def wait_for_keypress(self, queue):
+        while queue.empty():
+            pass
+        while not queue.empty():
+            queue.get()
+
+    def calibrate(self, queue):
         log.info("Beginning calibration.")
         log.info("Please take off any weights from the scale and hit enter:")
-        input()
+        self.wait_for_keypress(queue)
         self.lower_ratio = self.measure_ratio()
         log.info("Please put the %sg weight on scale and hit enter:" % Scale.CALIBRATION_WEIGHT)
-        input()
+        self.wait_for_keypress(queue)
         self.higher_ratio = self.measure_ratio()
         return self
 

@@ -46,14 +46,14 @@ class Experiment(object):
         return path
 
     def run(self):
-        self.scale.calibrate()
         path = self.setup()
+        self.scale.calibrate(self.keyboard_queue)
         counter = 0
         last_battery_id = "calibration_weight"
         while True:
             if counter > self.RECALIBRATION_COUNTER:
                 counter = 0
-                self.scale.calibrate()
+                self.scale.calibrate(self.keyboard_queue)
             counter += 1
             log.info("Please put the current battery on the scale, "
                      "put the new battery in the fixture, and scan its barcode:")
