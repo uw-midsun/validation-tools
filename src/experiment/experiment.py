@@ -1,10 +1,11 @@
 import logging
 import os
+import signal
 import stat
 from datetime import datetime
-
 from equipments.b2902A import B2902A
 from equipments.scale import Scale
+from scenarios.dummy_scenario import DummyScenario
 from scenarios.weight_measurement_scenario import WeightMeasurementScenario
 import sys
 import threading
@@ -20,25 +21,33 @@ class Experiment(object):
         self.scale = Scale()
         self.keyboard_queue = Queue()
         self.input_thread = None
+        self.results_directory = None
 
     def add_input(self, input_queue):
         while True:
             input_queue.put(sys.stdin.read(1))
 
+    def signal_handler(self, sig, frame):
+        log.info('Exitting.')
+        self.teardown()
+        sys.exit(0)
+
     def setup(self):
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         folder_name = "{}_{}".format(self.experiment_name, timestamp)
         path = "./results/{}".format(folder_name)
+        self.results_directory = path
         self.input_thread = threading.Thread(target=self.add_input, args=(self.keyboard_queue,))
         self.input_thread.daemon = True
         self.input_thread.start()
         log.info("Creating folder: %s to store the results" % path)
         os.makedirs(path)
+        signal.signal(signal.SIGINT, self.signal_handler)
         return path
 
     def run(self):
-        self.scale.calibrate()
         path = self.setup()
+        self.scale.calibrate()
         counter = 0
         last_battery_id = "calibration_weight"
         while True:
@@ -73,12 +82,13 @@ class Experiment(object):
             for recipe in self.recipes:
                 scenario = recipe(cell_id)
                 scenario.run(path)
-        self.teardown(path)
+        self.teardown()
 
     def battery_inserted_correctly(self):
         return B2902A().connect().get_voltage() > 0
 
-    def teardown(self, path):
+    def teardown(self):
+        path = self.results_directory
         for root, dirs, files in os.walk(path):
             permissions = stat.S_IROTH | stat.S_IRGRP | stat.S_IREAD
             for d in dirs:
